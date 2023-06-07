@@ -5,7 +5,8 @@
 
 
 
-get_ipython().system('pip install twilio')
+#get_ipython().system('pip install twilio')
+#pip install twilio
 from twilio.rest import Client
 
 account_sid = 'AC225bee69b87720fa00cc282e477d8998'
