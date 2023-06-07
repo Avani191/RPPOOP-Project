@@ -166,72 +166,59 @@ def responsed(msg1):
     return response
 
 
-class chatbot:
-    def _init_(self):
-       # self.name = "Stark"
-        self.msgs = []
-        
-    def conversation(self, message):
-       # print(f"Chatbot : Hey there, How are you doing today? I am {self.name}.\n")
-        flag = True
-        while(flag == True):
-            m = input("User : ")
-            m = m.lower()
-            self.msgs.append(m)
-            if len(self.msgs) > 15:
-                self.msgs = self.msgs[-15:]
-            if(m == "bye" ):
-                flag = False
-                response = responsed(m)
-                print("Chatbot : "+response)
-            else:
-                response = responsed(m)
-                if(response =="Here are some songs for you" or response == "right here for you" ):
-                    print("Chatbot : "+response)
-                    response = self.song_emotion()
-                print("Chatbot : "+response)
-          
-                
-    def song_emotion(self):
-        sid = SentimentIntensityAnalyzer()
-        songs = {}
+def song_emotion(msgs):
+    sid = SentimentIntensityAnalyzer()
+    songs = {}
 
-        for msg in self.msgs:
-            sentiment_scores = sid.polarity_scores(msg)
-            emotion = max(sentiment_scores, key=sentiment_scores.get)
-            if(emotion == "neg"):
-                emotion = "sad"
+    for msg in msgs:
+        sentiment_scores = sid.polarity_scores(msg)
+        emotion = max(sentiment_scores, key=sentiment_scores.get)
+        if(emotion == "neg"):
+            emotion = "sad"
            # print(emotion)
 
-            url = f"http://ws.audioscrobbler.com/2.0/?method=tag.gettoptracks&tag={emotion}&api_key=715156ee90d656693aaf300097923cbd&format=json&limit=20"
-            response = requests.get(url)
-            payload = response.json()
+        url = f"http://ws.audioscrobbler.com/2.0/?method=tag.gettoptracks&tag={emotion}&api_key=715156ee90d656693aaf300097923cbd&format=json&limit=20"
+        response = requests.get(url)
+        payload = response.json()
 
-            for i in range(10):
-                r = payload['tracks']['track'][i]
-                songs[r['name']] = r['url']
+        for i in range(10):
+            r = payload['tracks']['track'][i]
+            songs[r['name']] = r['url']
 
-        song_urls = list(songs.values())
+    song_urls = list(songs.values())
 
-        if len(song_urls) > 5:
-            random.shuffle(song_urls)
-            song_urls = song_urls[:5]
+    if len(song_urls) > 5:
+        random.shuffle(song_urls)
+        song_urls = song_urls[:5]
 
-        return '\n'.join(song_urls)
+    return '\n'.join(song_urls)
     
 from flask import Flask, request, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 
-c = chatbot()
-#c.name
+msgs=[]
 
 @app.route('/sms', methods=['POST'])
 def sms():
-    message_body = request.form['Body']
-    response = c.conversation(message_body)
-    send_message(response)
+    flag = True
+    while(flag == True):
+        message_body = request.form['Body']
+        message = message_body.lower()
+        msgs.append(message)
+        if len(msgs) > 15:
+            msgs = msgs[-15:]
+        if(message == "bye" ):
+            flag = False
+            response = responsed(message)
+            send_message(response)
+        else:
+            response = responsed(message)
+            if(response =="Here are some songs for you" or response == "right here for you" ):
+                send_message(response)
+                response = self.song_emotion(msgs)
+            send_message(response)
 
 def send_message(message):
     client.messages.create(
@@ -242,7 +229,7 @@ if __name__ == '__main__':
     nltk.download('punkt')
     nltk.download('wordnet')
     nltk.download('vader_lexicon')
-    app.run()  
+    app.run() 
 
 
 
