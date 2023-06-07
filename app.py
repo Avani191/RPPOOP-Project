@@ -168,11 +168,11 @@ def responsed(msg1):
 
 class chatbot:
     def _init_(self):
-        self.name = "Stark"
+       # self.name = "Stark"
         self.msgs = []
         
     def conversation(self, message):
-        print(f"Chatbot : Hey there, How are you doing today? I am {self.name}.\n")
+       # print(f"Chatbot : Hey there, How are you doing today? I am {self.name}.\n")
         flag = True
         while(flag == True):
             m = input("User : ")
@@ -245,13 +245,6 @@ if __name__ == '__main__':
     app.run()  
 
 
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
