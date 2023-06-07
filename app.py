@@ -230,7 +230,7 @@ if __name__ == '__main__':
     nltk.download('punkt')
     nltk.download('wordnet')
     nltk.download('vader_lexicon')
-    app.run() 
+    app.run(timeout=120) 
 
 
 
