@@ -198,10 +198,11 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 
-msgs=[]
+
 
 @app.route('/sms', methods=['POST'])
 def sms():
+    msgs=[]
     flag = True
     while(flag == True):
         message_body = request.form['Body']
